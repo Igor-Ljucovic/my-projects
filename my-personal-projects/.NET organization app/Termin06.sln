@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp", "WebApp\WebApp.csproj", "{B3370E63-D0D1-4733-8C6B-9F508FB35D8C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6A3DDC98-E35A-4859-9198-45E3AD2908A1} = {6A3DDC98-E35A-4859-9198-45E3AD2908A1}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceLayer", "ServiceLayer\ServiceLayer.csproj", "{E40217D3-0DAA-40A0-98FE-69BBA1BEB95E}"
 EndProject

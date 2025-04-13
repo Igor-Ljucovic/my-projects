@@ -17,6 +17,9 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 // refreshing instead of having to restart the app to see changes
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
+builder.Services.AddSession(); // add this
+builder.Services.AddHttpContextAccessor(); // optional but useful
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -34,6 +37,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseSession();
 app.UseRouting();
 
 app.UseAuthorization();

@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -27,10 +29,31 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tasks</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" asp-controller="UserTasks" asp-action="index">All tasks</a></li>
-                            <li><a class="dropdown-item" asp-controller="UserTasks" asp-action="add">Add new tasks</a></li>
+                            <li><a class="dropdown-item" asp-controller="UserTasks" asp-action="Index">All tasks</a></li>
+                            <li><a class="dropdown-item" asp-controller="UserTasks" asp-action="Add">Add new task</a></li>
                         </ul>
                     </li>
+                </ul>
+
+                <ul class="navbar-nav ms-auto">
+                    @if (Context.Session.GetString("Username") != null)
+                    {
+                        <li class="nav-item">
+                            <span class="nav-link">Welcome, @Context.Session.GetString("Username")!</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

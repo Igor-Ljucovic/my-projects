@@ -16,6 +16,11 @@ namespace WebApp.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            // like the unique constraint in the SSMS database
+            modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+
             // Table-per-type inheritance
             modelBuilder.Entity<CalendarTask>().ToTable("CalendarTasks");
             modelBuilder.Entity<RepetitiveTask>().ToTable("RepetitiveTasks");
