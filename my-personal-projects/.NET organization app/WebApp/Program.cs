@@ -1,7 +1,7 @@
 using DataAccessLayer;
 using ServiceLayer;
 using WebApp.Data;
-using Microsoft.EntityFrameworkCore; // ? needed for UseSqlServer()
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +17,15 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 // refreshing instead of having to restart the app to see changes
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-builder.Services.AddSession(); // add this
+builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor(); // optional but useful
 
+// register CORS policy
+builder.Services.AddCors(options => { options.AddPolicy("AllowReactApp", policy => policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod()); });
+
 var app = builder.Build();
+// ENABLE CORS BEFORE routing/middleware
+app.UseCors("AllowReactApp");
 
 using (var scope = app.Services.CreateScope())
 {

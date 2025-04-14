@@ -22,43 +22,31 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public IActionResult Register(User user)
+    [Route("api/account/register")]
+    public IActionResult Register([FromBody] User user)
     {
-        if (ModelState.IsValid)
-        {
-            if (_context.Users.Any(u => u.Username == user.Username))
-            {
-                ModelState.AddModelError("Username", "Username already exists.");
-                return View(user);
-            }
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-            if (_context.Users.Any(u => u.Email == user.Email))
-            {
-                ModelState.AddModelError("Email", "Email is already in use.");
-                return View(user);
-            }
+        if (_context.Users.Any(u => u.Username == user.Username))
+            return BadRequest(new { field = "username", message = "Username already exists." });
 
-            user.EmailConfirmationToken = GenerateSecureToken(32);
-            user.EmailConfirmationTokenExpiresAt = DateTime.UtcNow.AddMinutes(10);
-            user.IsEmailConfirmed = false;
+        if (_context.Users.Any(u => u.Email == user.Email))
+            return BadRequest(new { field = "email", message = "Email is already in use." });
 
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+        user.EmailConfirmationToken = GenerateSecureToken(32);
+        user.EmailConfirmationTokenExpiresAt = DateTime.UtcNow.AddMinutes(10);
+        user.IsEmailConfirmed = false;
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
+        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
-            var confirmationLink = Url.Action("ConfirmEmail", "Account", new { token = user.EmailConfirmationToken, userId = user.UserID }, protocol: Request.Scheme);
-            new EmailConfirmationService().SendConfirmationEmail(user, confirmationLink);
+        _context.Users.Add(user);
+        _context.SaveChanges();
 
-            TempData["Message"] = "Check your email and verify it to log in.";
+        var confirmationLink = Url.Action("ConfirmEmail", "Account", new { token = user.EmailConfirmationToken, userId = user.UserID }, protocol: Request.Scheme);
+        new EmailConfirmationService().SendConfirmationEmail(user, confirmationLink);
 
-            return RedirectToAction("Login");
-        }
-
-        foreach (var modelError in ModelState.Values.SelectMany(v => v.Errors))
-            Debug.WriteLine("MODEL ERROR: " + modelError.ErrorMessage);
-        
-        return View(user);
+        return Ok(new { message = "User registered successfully. Check your email to confirm." });
     }
 
     private string GenerateSecureToken(int byteLength = 32)
