@@ -2,6 +2,9 @@
 using System.Diagnostics;
 using WebApp.Data;
 using WebApp.Models;
+using WebApp.Services;
+using BCrypt.Net;
+using System.Security.Cryptography;
 
 public class AccountController : Controller
 {
@@ -9,45 +12,62 @@ public class AccountController : Controller
 
     public AccountController(AppDbContext context)
     {
-        Debug.WriteLine("app context konstruktor kod account");
         _context = context;
     }
 
     [HttpGet]
     public IActionResult Register()
     {
-        Debug.WriteLine("vracen register");
         return View();
     }
 
     [HttpPost]
     public IActionResult Register(User user)
     {
-        Debug.WriteLine("register sa userom pre ifa");
         if (ModelState.IsValid)
         {
-            Debug.WriteLine("pocetak ifa al pre drugog ifa");
             if (_context.Users.Any(u => u.Username == user.Username))
             {
-                ModelState.AddModelError("", "Username already exists.");
+                ModelState.AddModelError("Username", "Username already exists.");
                 return View(user);
             }
 
-            Debug.WriteLine("Dodat korisnik");
+            if (_context.Users.Any(u => u.Email == user.Email))
+            {
+                ModelState.AddModelError("Email", "Email is already in use.");
+                return View(user);
+            }
+
+            user.EmailConfirmationToken = GenerateSecureToken(32);
+            user.EmailConfirmationTokenExpiresAt = DateTime.UtcNow.AddMinutes(10);
+            user.IsEmailConfirmed = false;
+
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
             _context.Users.Add(user);
             _context.SaveChanges();
+
+            var confirmationLink = Url.Action("ConfirmEmail", "Account", new { token = user.EmailConfirmationToken, userId = user.UserID }, protocol: Request.Scheme);
+            new EmailConfirmationService().SendConfirmationEmail(user, confirmationLink);
+
+            TempData["Message"] = "Check your email and verify it to log in.";
 
             return RedirectToAction("Login");
         }
 
         foreach (var modelError in ModelState.Values.SelectMany(v => v.Errors))
-        {
             Debug.WriteLine("MODEL ERROR: " + modelError.ErrorMessage);
-        }
-
+        
         return View(user);
     }
+
+    private string GenerateSecureToken(int byteLength = 32)
+    {
+        byte[] tokenBytes = new byte[byteLength];
+        RandomNumberGenerator.Fill(tokenBytes);
+        return Convert.ToBase64String(tokenBytes);
+    }
+
 
     [HttpGet]
     public IActionResult Login()
@@ -59,11 +79,17 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult Login(string username, string password)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
+        var user = _context.Users.FirstOrDefault(u => u.Username == username);
 
-        if (user == null)
+        if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
         {
             ModelState.AddModelError("", "Invalid username or password.");
+            return View();
+        }
+
+        if (!user.IsEmailConfirmed)
+        {
+            ModelState.AddModelError("", "Please confirm your email before logging in.");
             return View();
         }
 
@@ -76,6 +102,33 @@ public class AccountController : Controller
     public IActionResult Logout()
     {
         HttpContext.Session.Clear();
+        return RedirectToAction("Login");
+    }
+
+    [HttpGet]
+    public IActionResult ConfirmEmail(string token, int userId)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.UserID == userId && 
+                                                 u.EmailConfirmationToken == token &&
+                                                 u.EmailConfirmationTokenExpiresAt > DateTime.UtcNow);
+
+        if (user.EmailConfirmationTokenExpiresAt < DateTime.UtcNow)
+        {
+            TempData["Message"] = "This confirmation link is invalid or expired.";
+            return RedirectToAction("Login");
+        }
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        user.IsEmailConfirmed = true;
+        user.EmailConfirmationToken = null;
+        user.EmailConfirmationTokenExpiresAt = null;
+        _context.SaveChanges();
+
+        TempData["Message"] = "Your email has been verified!";
         return RedirectToAction("Login");
     }
 }
