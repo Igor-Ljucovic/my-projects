@@ -1,0 +1,37 @@
+﻿namespace Common.Communication
+{
+    public enum Operation
+    {
+        LogInEmployee,
+        CreateReservation,
+        SearchReservation,
+        UpdateReservation,
+        CreateReservationItem,
+        SearchReservationItem,
+        UpdateReservationItem,
+        CreateGuest,
+        SearchGuest,
+        UpdateGuest,
+        DeleteGuest,
+        CreateHotel,
+        SearchHotel,
+        UpdateHotel,
+        DeleteHotel,
+        CreateRoom,
+        SearchRoom,
+        UpdateRoom,
+        DeleteRoom,
+        CreateLocation,
+        SearchLocation,
+        UpdateLocation,
+        DeleteLocation,
+        CreateReviewInstitution,
+        SearchReviewInstitution,
+        UpdateReviewInstitution,
+        DeleteReviewInstitution,
+        CreateHotelReview,
+        SearchHotelReview,
+        UpdateHotelReview,
+        DeleteHotelReview
+    }
+}
