@@ -1,0 +1,36 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+
+# VS / JetBrains / Rider
+.vs/
+*.csproj
+*.sln
+*.user
+*.suo
+*.unityproj
+
+# Unity metadata
+*.pidb
+*.booproj
+*.svd
+
+# Builds
+*.apk
+*.aab
+*.exe
+
+# User settings
+UserSettings/
+.vscode/
+
+# Crash logs
+*.stacktrace
+
+# OS junk
+.DS_Store
+Thumbs.db

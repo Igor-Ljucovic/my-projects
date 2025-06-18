@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Player
+  - Water
+  - UI
+  - Ground
+  - EnemyDealingDamage
+  - EnemyTakingDamage
+  - Enemy
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Ground
+    uniqueID: 449761869
+    locked: 0
+  - name: Slash
+    uniqueID: 1253460117
+    locked: 0
+  - name: Particles
+    uniqueID: 529467969
+    locked: 0
+  - name: Spells
+    uniqueID: 728774119
+    locked: 0
+  - name: Player
+    uniqueID: 3012498919
+    locked: 0
+  - name: Enemies
+    uniqueID: 3725547681
+    locked: 0
+  - name: UI
+    uniqueID: 3650631167
+    locked: 0
