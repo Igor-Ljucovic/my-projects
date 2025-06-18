@@ -2,6 +2,7 @@
 (Hollow Knight) where the player can choose items, a game mode
 and a boss to fight from the menu.
 
+Assets/Scripts/PlayTest Scene Scripts - this is where most of the code is at.
 
 
 
@@ -30,3 +31,6 @@ succession, even though the attack was on cooldown when the attack
 button was pressed the second time, the player will still perform
 the attack exactly when the attack cooldown is over, because of the
 buffer system, instead of the second attack never happening).
+
+Note: This project was committed all at once after development had already started, 
+as I didn't know how to use Git from the beginning. Version history is limited in early stages.

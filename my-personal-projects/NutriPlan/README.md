@@ -7,6 +7,7 @@ Tech Stack
 - **Backend**: PHP, Laravel, Eloquent ORM  
 - **Frontend**: React, HTML, CSS, Bootstrap
 
-This was a university project, so all of the commits were pushed on a university repository instead.
-In this project, I learned about web apps (my first CRUD web app), web app architecture,
-routes, testing libraries, authentication and authorization, user roles, using APIs
+Note: This was a university project, so all of the commits were pushed on a university repository instead.
+In this project, I learned about web apps (my first CRUD web app), web app architecture, routes, 
+communication using JSON, authentication and authorization, user roles, using APIs, testing libraries,
+designing and managing relational databases, using Laravel and React.
