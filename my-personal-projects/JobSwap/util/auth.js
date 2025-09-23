@@ -1,24 +1,34 @@
 import axios from 'axios';
-
-const API_KEY = 'AIzaSyD4Wf-0lqPXdSnza_7ERpVtpnxtVteD6S0';
+import { FIREBASE_API_KEY } from '@env';
 
 async function authenticate(mode, email, password) {
-  // mode is either 'signUp' or 'signInWithPassword'
-  const url = `https://identitytoolkit.googleapis.com/v1/accounts:${mode}?key=${API_KEY}`;
-
-  const response = await axios.post(url, {
-    email: email,
-    password: password,
-    returnSecureToken: true,
-  });
-
-  console.log(response.data);
+  // mode je 'signUp' ili 'signInWithPassword' koji pisu dole
+  const url = `https://identitytoolkit.googleapis.com/v1/accounts:${mode}?key=${FIREBASE_API_KEY}`;
+  try {
+    const { data } = await axios.post(url, {
+      email,
+      password,
+      returnSecureToken: true,
+    });
+    return {
+      idToken: data.idToken,
+      refreshToken: data.refreshToken,
+      expiresIn: Number(data.expiresIn),
+      userId: data.localId,
+      email: data.email,
+    };
+  } catch (err) {
+    throw new Error(err?.response?.data?.error?.message);
+  }
 }
 
 export async function createUser(email, password) {
-  await authenticate('signUp', email, password);
+  const res = await authenticate('signUp', email, password);
+  return res.idToken;
 }
 
 export async function login(email, password) {
-  await authenticate('signInWithPassword', email, password);
+  const res = await authenticate('signInWithPassword', email, password);
+  return res.idToken;
 }
+
