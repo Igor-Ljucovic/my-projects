@@ -29,15 +29,41 @@ function AuthContent({ isLogin, onAuthenticate }) {
     email = email.trim();
     password = password.trim();
 
-    const emailIsValid = email.includes('@');
-    const passwordIsValid = password.length > 6;
-    const passwordsAreEqual = password === confirmPassword;
+    // something@something.something
+    const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); 
+    
 
-    if (
-      !emailIsValid ||
-      !passwordIsValid ||
-      (!isLogin && !passwordsAreEqual)
-    ) {
+    // pazi, ovde ako promenis nesto, moras i ispod u poruci o gresci!
+    const passwordHasMinLength = password.length >= 10;
+    const passwordHasUpper = /[A-Z]/.test(password); 
+    const passwordHasLower = /[a-z]/.test(password);
+    const passwordHasNumber = /[0-9]/.test(password); // 1 malo, 1 veliko slovo i 1 broj
+
+    const passwordsAreEqual = password === confirmPassword; 
+
+    const passwordIsValid = passwordHasMinLength && passwordHasUpper
+    && passwordHasLower && passwordHasNumber;
+
+    if (!emailIsValid) {
+      // neke mail-ove kao sto je nesto@nesto.j nece FireBase prihvatiti i bacice svoju
+      // gresku, jer zna da ne postoji takav TLD (top-level domen) - "INVALID_EMAIL"
+      Alert.alert(
+        'Email invalid',
+        'Enter a valid email address.'
+      );
+      return;
+    }
+
+    if (!passwordIsValid) {
+      Alert.alert(
+        'Weak password',
+        'Password must be at least 10 characters long, ' +
+        'include at least 1 uppercase letter, 1 lowercase letter, 1 number.'
+      );
+      return;
+    }
+
+    if (!isLogin && !passwordsAreEqual) {
       Alert.alert('Invalid input', 'Please check your entered credentials.');
       setCredentialsInvalid({
         email: !emailIsValid,
