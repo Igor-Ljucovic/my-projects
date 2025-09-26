@@ -1,28 +1,10 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { ref, update } from 'firebase/database';
-import { db } from '../util/firebase';
 import { AuthContext } from '../store/auth-context';
 
 function WelcomeScreen() {
 
-  const { userId } = useContext(AuthContext);
-  console.log('[WelcomeScreen] effect ran. userId =', userId);
-  useEffect(() => {
-  if (!userId) return;
-
-  const path = `users/${userId}/profileSettings`;
-  console.log('Writing to:', path);
-
-  // THIS IS JUST A TEST
-  update(ref(db, path), {
-    getMessageNotifications: true,
-    privateProfile: true,
-    })
-      .then(() => console.log('DB write OK'))
-      .catch((e) => console.log('DB write FAILED:', e.code, e.message));
-  }, [userId]);
-  // TEST--
+  if (!useContext(AuthContext).userId) return;
 
   return (
     <View style={styles.rootContainer}>

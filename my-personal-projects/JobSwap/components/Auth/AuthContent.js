@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
 import FlatButton from '../UI/FlatButton';
 import AuthForm from './AuthForm';
 import { Colors } from '../../constants/styles';
@@ -48,7 +47,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
       // neke mail-ove kao sto je nesto@nesto.j nece FireBase prihvatiti i bacice svoju
       // gresku, jer zna da ne postoji takav TLD (top-level domen) - "INVALID_EMAIL"
       Alert.alert(
-        'Email invalid',
+        'Email invalid', 
         'Enter a valid email address.'
       );
       return;
@@ -57,8 +56,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
     if (!passwordIsValid) {
       Alert.alert(
         'Weak password',
-        'Password must be at least 10 characters long, ' +
-        'include at least 1 uppercase letter, 1 lowercase letter, 1 number.'
+        'Password must be at least 10 characters long, include at least 1 uppercase letter, 1 lowercase letter, 1 number.'
       );
       return;
     }
