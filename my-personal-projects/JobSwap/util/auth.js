@@ -1,34 +1,32 @@
-import axios from 'axios';
-import { FIREBASE_API_KEY } from '@env';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../util/firebase';
 
+// modovi su 'signUp' i 'signInWithPassword'
 async function authenticate(mode, email, password) {
-  // mode je 'signUp' ili 'signInWithPassword' koji pisu dole
-  const url = `https://identitytoolkit.googleapis.com/v1/accounts:${mode}?key=${FIREBASE_API_KEY}`;
   try {
-    const { data } = await axios.post(url, {
-      email,
-      password,
-      returnSecureToken: true,
-    });
+    const cred =
+      mode === 'signUp'
+        ? await createUserWithEmailAndPassword(auth, email, password)
+        : await signInWithEmailAndPassword(auth, email, password);
+
+    const user = cred.user;
+    const idToken = await user.getIdToken();
+
     return {
-      idToken: data.idToken,
-      refreshToken: data.refreshToken,
-      expiresIn: Number(data.expiresIn),
-      userId: data.localId,
-      email: data.email,
+      idToken,
+      userId: user.uid,
+      email: user.email ?? email,
     };
   } catch (err) {
-    throw new Error(err?.response?.data?.error?.message);
+    const msg = err?.code ?? err?.message ?? 'AUTH_ERROR';
+    throw new Error(msg);
   }
 }
 
-export async function createUser(email, password) {
-  const res = await authenticate('signUp', email, password);
-  return res.idToken;
+export function createUser(email, password) {
+  return authenticate('signUp', email, password);
 }
 
-export async function login(email, password) {
-  const res = await authenticate('signInWithPassword', email, password);
-  return res.idToken;
+export function login(email, password) {
+  return authenticate('signInWithPassword', email, password);
 }
-

@@ -2,29 +2,35 @@ import { createContext, useState } from 'react';
 
 export const AuthContext = createContext({
   token: '',
+  userId: null,
   isAuthenticated: false,
-  authenticate: (token) => {},
+  authenticate: (_payload) => {},
   logout: () => {},
 });
 
 function AuthContextProvider({ children }) {
-  const [authToken, setAuthToken] = useState();
+  const [token, setToken] = useState(null);
+  const [userId, setUserId] = useState(null);
+  
 
   function authenticate(token) {
-    setAuthToken(token);
+    setToken(token.idToken);
+    setUserId(token.userId);
   }
 
   function logout() {
-    setAuthToken(null);
+    setToken(null);
+    setUserId(null);
   }
 
   const value = {
-    token: authToken,
-    isAuthenticated: !!authToken,
-    authenticate: authenticate,
-    logout: logout,
+    token,
+    userId,
+    isAuthenticated: !!token,
+    authenticate,
+    logout,
   };
-
+  console.log('login response:', { token, userId });
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

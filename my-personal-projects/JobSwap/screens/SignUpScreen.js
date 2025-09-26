@@ -13,14 +13,11 @@ function SignUpScreen() {
     setIsAuthenticating(true);
     try {
       const token = await createUser(email, password);
-      if (!token) throw new Error('No token returned from createUser.');
-      authCtx.authenticate(token);
+      if (!token) throw new Error('Invalid register response.');
+        authCtx.authenticate(token); 
     } catch (err) {
       console.log(err);
-      Alert.alert(
-        'Authentication failed',
-        err?.message ?? 'Could not create user, please check your input.'
-      );
+      Alert.alert('Authentication failed', err?.message ?? 'Could not create user, please check your input.');
     } finally {
       setIsAuthenticating(false); // da zaustavi spinner ucitavanja
     }
