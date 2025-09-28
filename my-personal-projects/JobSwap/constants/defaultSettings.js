@@ -1,6 +1,7 @@
-export const PROFILE_SETTINGS_DEFAULT = {
+export const USER_SETTINGS_DEFAULT = {
   getMessageNotifications: true,
   publicProfile: true,
+  userLocation: '',
   jobCategory: '',
   jobDescription: '',
   jobLanguage: '',
@@ -11,7 +12,7 @@ export const PROFILE_SETTINGS_DEFAULT = {
   jobTags: '',
   jobTitle: '',
   jobScheduleType: 'fixed',
-  workFromHome: 'no',
+  workModel: 'on-site',
   jobStartTime: '09:00',
   jobEndTime: '17:00'
 };
@@ -27,6 +28,7 @@ export const MATCHING_SETTINGS_DEFAULT = {
   maxJobLocationDistanceKm: 10,
   maxJobStartTime: '',
   minJobStartTime: '',
-  workFromHome: '',
-  jobScheduleType: '',
+  workModels: '',
+  jobScheduleTypes: '',
+  minimumNumberOfCriteriaToMatch: 3
 };

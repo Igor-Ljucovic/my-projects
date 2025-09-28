@@ -1,16 +1,11 @@
-import { ScrollView, View, Text, TextInput, Switch, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
+import { ScrollView, View, Text, TextInput, Switch, Pressable } from 'react-native';
 import CountryPicker, { Flag } from 'react-native-country-picker-modal';
-import { Field, TimeInput, ScheduleToggle, WorkFromHomeToggle } from '../../util/userSettings';
+import { Field, TimeInput, ScheduleTypeToggleUserSettings, WorkModelToggleUserSettings } from '../../util/settings';
 import { userSettingsFormStyles } from '../../constants/styles';
 
 export default function UserSettingsForm({ form, setText, setBool, setValue, setForm, isFixed, initialForPicker, navigation, handleSave, saving }) {
   
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.select({ ios: 'padding', android: undefined })}
-            style={{ flex: 1 }}
-            keyboardVerticalOffset={Platform.select({ ios: 84, android: 0 })}
-        >
         <ScrollView contentContainerStyle={userSettingsFormStyles.container}>
             <View style={userSettingsFormStyles.card}>
                 <Text style={userSettingsFormStyles.sectionTitle}>Privacy & Notifications</Text>
@@ -121,16 +116,16 @@ export default function UserSettingsForm({ form, setText, setBool, setValue, set
             <Text style={userSettingsFormStyles.sectionTitle}>Time & Flexibility</Text>
 
             <Field label="Schedule Type">
-                <ScheduleToggle
+                <ScheduleTypeToggleUserSettings
                     value={form.jobScheduleType}
                     onChange={(val) => setValue('jobScheduleType', val)}
                 />
             </Field>
 
-            <Field label="Work From Home">
-                <WorkFromHomeToggle
-                    value={form.workFromHome}
-                    onChange={(val) => setValue('workFromHome', val)}
+            <Field label="Work Model">
+                <WorkModelToggleUserSettings
+                    value={form.workModel}
+                    onChange={(val) => setValue('workModel', val)}
                 />
             </Field>
 
@@ -154,7 +149,7 @@ export default function UserSettingsForm({ form, setText, setBool, setValue, set
             <View style={userSettingsFormStyles.card}>
             <Text style={userSettingsFormStyles.sectionTitle}>Location</Text>
 
-            <Field label="Location Name">
+            <Field label="Job Location Name">
                 <TextInput
                     value={form.jobLocationName}
                     onChangeText={setText('jobLocationName')}
@@ -163,7 +158,7 @@ export default function UserSettingsForm({ form, setText, setBool, setValue, set
                 />
             </Field>
 
-            <Field label="Location">
+            <Field label="Job Location">
                 <View style={[userSettingsFormStyles.input, { backgroundColor: '#e5e7eb' }]}>
                 <Text
                     style={{
@@ -178,27 +173,70 @@ export default function UserSettingsForm({ form, setText, setBool, setValue, set
 
             <View style={{ flexDirection: 'row', gap: 10, marginTop: 8 }}>
                 <Pressable
-                    onPress={() =>
+                    onPress={() => {
                         navigation.navigate('MapPicker', {
-                        returnTo: 'UserSettings',
-                        initialLocation: initialForPicker,
-                    })
-                }
-                style={userSettingsFormStyles.mapPickButton}>
-                <Text style={userSettingsFormStyles.mapPickButtonText}>Map</Text>
+                            returnTo: 'UserSettings',
+                            initialLocation: initialForPicker,
+                            target: 'jobLocation',
+                        });
+                    }}
+                    style={userSettingsFormStyles.mapPickButton}
+                    >
+                    <Text style={userSettingsFormStyles.mapPickButtonText}>Map</Text>
                 </Pressable>
                 <View style={{ flex: 1, justifyContent: 'center' }}>
-                <Text style={userSettingsFormStyles.helpText}>Long-press the map to drop a pin</Text>
+                <Text style={userSettingsFormStyles.helpText}>(Long-press the map to drop a pin)</Text>
                 </View>
             </View>
-            </View>
 
-            <View style={userSettingsFormStyles.buttonsRow}>
-            <Pressable onPress={handleSave} style={userSettingsFormStyles.mapPickButton} disabled={saving}>
-                <Text style={userSettingsFormStyles.mapPickButtonText}>Save</Text>
-            </Pressable>
-            </View>
-        </ScrollView>
-        </KeyboardAvoidingView>
+            <Field label="Your Location (optional, for distance calculation)">
+                <View style={[userSettingsFormStyles.input, { backgroundColor: '#e5e7eb' }]}>
+                <Text
+                    style={{
+                    fontSize: 16,
+                    color: form.userLocation ? '#374151' : '#9ca3af',
+                    }}
+                >
+                    {form.userLocation || 'Pick your location on the map'}
+                </Text>
+                </View>
+            </Field>
+
+    <View style={{ flexDirection: 'row', gap: 10, marginTop: 8 }}>
+    <Pressable
+      onPress={() => {
+        const initialUserLoc = (() => {
+          const s = form.userLocation;
+          if (!s || typeof s !== 'string') return null;
+          const parts = s.split(',').map(t => t.trim());
+          if (parts.length !== 2) return null;
+          const lat = Number(parts[0]); const lng = Number(parts[1]);
+          return (Number.isFinite(lat) && Number.isFinite(lng)) ? { lat, lng } : null;
+        })();
+
+        navigation.navigate('MapPicker', {
+          returnTo: 'UserSettings',
+          initialLocation: initialUserLoc,
+          target: 'userLocation',
+        });
+      }}
+      style={userSettingsFormStyles.mapPickButton}
+    >
+      <Text style={userSettingsFormStyles.mapPickButtonText}>Map</Text>
+    </Pressable>
+
+    <View style={{ flex: 1, justifyContent: 'center' }}>
+      <Text style={userSettingsFormStyles.helpText}>
+        (Long-press the map to drop a pin)
+      </Text>
+    </View>
+    </View>        
+    </View>
+    <View style={userSettingsFormStyles.buttonsRow}>
+    <Pressable onPress={handleSave} style={userSettingsFormStyles.mapPickButton} disabled={saving}>
+        <Text style={userSettingsFormStyles.mapPickButtonText}>Save</Text>
+    </Pressable>
+    </View>
+    </ScrollView>
     );
 }

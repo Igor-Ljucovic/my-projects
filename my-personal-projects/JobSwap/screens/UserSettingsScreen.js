@@ -4,7 +4,7 @@ import { View, Text, ActivityIndicator, Alert } from 'react-native';
 import { ref, onValue, update, set } from 'firebase/database';
 import { AuthContext } from '../store/auth-context';
 import { db } from '../util/firebase';
-import { PROFILE_SETTINGS_DEFAULT } from '../constants/settings';
+import { USER_SETTINGS_DEFAULT } from '../constants/defaultSettings';
 import IconButton from '../components/UI/IconButton';
 import { parseLatLng } from '../util/geo';
 import { userSettingsFormStyles } from '../constants/styles';
@@ -15,13 +15,13 @@ function UserSettingsScreen({ navigation }) {
   const { userId } = useContext(AuthContext);
   const route = useRoute();
 
-  const DEFAULTS = { ...PROFILE_SETTINGS_DEFAULT };
+  const DEFAULTS = { ...USER_SETTINGS_DEFAULT };
   const [form, setForm] = useState(DEFAULTS);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   const path = useMemo(
-    () => (userId ? `users/${userId}/profileSettings` : null),
+    () => (userId ? `users/${userId}/userSettings` : null),
     [userId]
   );
 
@@ -39,40 +39,30 @@ function UserSettingsScreen({ navigation }) {
   }, [form.jobScheduleType]);
 
   useEffect(() => {
-    const sub = navigation.addListener('beforeRemove', (e) => {
-      if (e.data.action.type === 'GO_BACK' || e.data.action.type === 'POP') {
-        e.preventDefault();
-        goHome();
-      }
-    });
-    return sub;
-  }, [navigation]);
-
-  useEffect(() => {
     const picked = route.params?.pickedLocation;
+    const target = route.params?.target; // 'jobLocation' i 'userLocation'
     if (!picked || !path) return;
 
     const latlng = `${picked.lat},${picked.lng}`;
+    const isUser = target === 'userLocation';
 
-    setForm((prev) => ({
+    setForm(prev => ({
       ...prev,
-      jobLocation: latlng,
-      jobLocationName: picked.label || prev.jobLocationName || '',
+      ...(isUser
+        ? { userLocation: latlng }
+        : { jobLocation: latlng, jobLocationName: picked.label || prev.jobLocationName || '' }
+      ),
     }));
 
+    const payload = isUser
+      ? { userLocation: latlng }
+      : { jobLocation: latlng, jobLocationName: picked.label || '' };
+
     (async () => {
-      try {
-        await update(ref(db, path), {
-          jobLocation: latlng,
-          jobLocationName: picked.label || '',
-        });
-      } catch (e) {
-        Alert.alert('Error', 'Could not save the selected location.');
-      }
+      try { await update(ref(db, path), payload); } catch (e) {}
     })();
 
-    navigation.setParams?.({ pickedLocation: undefined });
-  }, [route.params?.pickedLocation, path, navigation]);
+  }, [route.params?.pickedLocation, route.params?.target, path]);
 
   useLayoutEffect(() => {
     navigation.setOptions({

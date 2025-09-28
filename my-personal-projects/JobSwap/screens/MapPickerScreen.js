@@ -1,4 +1,3 @@
-// screens/MapPickerScreen.js
 import { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
@@ -8,12 +7,12 @@ import IconButton from '../components/UI/IconButton';
 export default function MapPickerScreen({ navigation, route }) {
   const mapRef = useRef(null);
   const [region, setRegion] = useState({
-    latitude: 44.7866,     // Belgrade as a sensible default
+    latitude: 44.7866,
     longitude: 20.4489,
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
-  const [picked, setPicked] = useState(null); // { latitude, longitude }
+  const [picked, setPicked] = useState(null);
 
   useEffect(() => {
     const init = route.params?.initialLocation;
@@ -71,7 +70,7 @@ export default function MapPickerScreen({ navigation, route }) {
       Alert.alert('Pick a point', 'Long-press on the map to drop a pin.');
       return;
     }
-    // Reverse geocode to human-readable name
+
     let label = '';
     try {
       const res = await Location.reverseGeocodeAsync({
@@ -80,22 +79,20 @@ export default function MapPickerScreen({ navigation, route }) {
       });
       if (res?.length) {
         const r = res[0];
-        label = [
-          r.name, r.street, r.city || r.subregion, r.region, r.postalCode, r.country
-        ].filter(Boolean).join(', ');
+        label = [r.name, r.street, r.city || r.subregion, r.region, r.postalCode, r.country]
+          .filter(Boolean)
+          .join(', ');
       }
     } catch {
-      // ignore, label will remain empty if reverse geocode fails
+      // nista, bice prazan label samo ako ne uspe, iovako je zasad neiskoriscen
     }
 
+    const target = route.params?.target;
     navigation.navigate({
-      name: route.params?.returnTo || 'UserSettings',
+      name: route.params?.returnTo,
       params: {
-        pickedLocation: {
-          lat: picked.latitude,
-          lng: picked.longitude,
-          label,
-        },
+        pickedLocation: { lat: picked.latitude, lng: picked.longitude, label },
+        target, // target je npr. 'jobLocation' ili 'userLocation'
       },
       merge: true,
     });
@@ -119,7 +116,6 @@ export default function MapPickerScreen({ navigation, route }) {
         )}
       </MapView>
 
-      {/* Floating buttons */}
       <View style={styles.fabRow}>
         <IconButton icon="locate" size={22} color="white" onPress={locateMe} style={styles.fab} />
         <IconButton icon="save" size={22} color="white" onPress={handleConfirm} style={styles.fab} />

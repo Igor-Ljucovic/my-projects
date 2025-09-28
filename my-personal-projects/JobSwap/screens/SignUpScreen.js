@@ -6,7 +6,7 @@ import { AuthContext } from '../store/auth-context';
 import { createUser } from '../util/auth';
 import { ref, update } from 'firebase/database';
 import { db } from '../util/firebase';
-import { PROFILE_SETTINGS_DEFAULT, MATCHING_SETTINGS_DEFAULT } from '../constants/settings';
+import { PROFILE_SETTINGS_DEFAULT, MATCHING_SETTINGS_DEFAULT } from '../constants/defaultSettings';
 
 function SignUpScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
