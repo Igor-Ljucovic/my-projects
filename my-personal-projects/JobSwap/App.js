@@ -7,7 +7,10 @@ import SignUpScreen from './screens/SignUpScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
 import { Colors } from './constants/styles';
 import AuthContextProvider, { AuthContext } from './store/auth-context';
-import IconButton from './components/UI/IconButton';
+import UserSettingsScreen from './screens/UserSettingsScreen';
+import MatchingSettingsScreen from './screens/MatchingSettingsScreen';
+import SettingsButton from './components/UI/SettingsButton';
+import MapPickerScreen from './screens/MapPickerScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,14 +44,24 @@ function AuthenticatedStack() {
         component={WelcomeScreen}
         options={{
           headerRight: ({ tintColor }) => (
-            <IconButton
-              icon="exit"
-              color={tintColor}
-              size={24}
-              onPress={authCtx.logout}
-            />
+            <SettingsButton tintColor={tintColor} />
           ),
         }}
+      />
+      <Stack.Screen 
+        name="MapPicker" 
+        component={MapPickerScreen} 
+        options={{ title: 'Pick Location' }} 
+      />
+      <Stack.Screen
+        name="UserSettings"
+        component={UserSettingsScreen}
+        options={{ title: 'User Settings' }}
+      />
+      <Stack.Screen
+        name="MatchingSettings"
+        component={MatchingSettingsScreen}
+        options={{ title: 'Matching Settings' }}
       />
     </Stack.Navigator>
   );

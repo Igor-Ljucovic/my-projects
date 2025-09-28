@@ -30,7 +30,6 @@ function AuthContextProvider({ children }) {
     authenticate,
     logout,
   };
-  console.log('login response:', { token, userId });
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

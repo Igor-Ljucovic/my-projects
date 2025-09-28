@@ -13,7 +13,6 @@ function LogInScreen() {
     setIsAuthenticating(true);
     try {
       const token = await login(email, password);
-      console.log('login response:', token);
       if (!token) throw new Error('Invalid login response.');
         authCtx.authenticate(token);  
     } catch (err) {

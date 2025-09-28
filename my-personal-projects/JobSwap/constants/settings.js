@@ -1,15 +1,19 @@
 export const PROFILE_SETTINGS_DEFAULT = {
   getMessageNotifications: true,
-  privateProfile: false,
+  publicProfile: true,
   jobCategory: '',
   jobDescription: '',
-  jobHours: '',
   jobLanguage: '',
   jobLocation: '',
   jobLocationName: '',
+  jobCountry: '',
   jobQualifications: '',
   jobTags: '',
   jobTitle: '',
+  jobScheduleType: 'fixed',
+  workFromHome: 'no',
+  jobStartTime: '09:00',
+  jobEndTime: '17:00'
 };
 
 export const MATCHING_SETTINGS_DEFAULT = {
@@ -18,7 +22,11 @@ export const MATCHING_SETTINGS_DEFAULT = {
   jobLocationName: '',
   jobTags: '',
   jobTitle: '',
-  maxLocationDistanceKm: 10,
-  maxShiftHours: '',
-  minShiftHours: '',
+  jobCountry: '',
+  jobQualifications: '',
+  maxJobLocationDistanceKm: 10,
+  maxJobStartTime: '',
+  minJobStartTime: '',
+  workFromHome: '',
+  jobScheduleType: '',
 };
