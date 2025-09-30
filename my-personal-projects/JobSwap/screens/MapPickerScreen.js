@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import IconButton from '../components/UI/IconButton';
 import * as Location from 'expo-location';
@@ -8,6 +8,8 @@ export default function MapPickerScreen({ navigation, route }) {
   const mapRef = useRef(null);
   const readOnly = !!route.params?.readOnly;
   const customTitle = route.params?.title;
+  const target = route.params?.target; // npr. 'jobLocation' ili 'userLocation', mora 
+  // kada imamo 2 ili vise lokacija na 1 stranici
 
   const [region, setRegion] = useState({
     latitude: 44.7866,
@@ -31,13 +33,20 @@ export default function MapPickerScreen({ navigation, route }) {
         headerRight: () => (
           <IconButton
             icon="save"
+            size={24}
             color="#fff"
             onPress={() => {
               if (!picked) return;
 
               navigation.navigate({
                 name: route.params?.returnTo || 'UserSettings',
-                params: { pickedLocation: picked },
+                params: {
+                  pickedLocation: {
+                    lat: picked.latitude,
+                    lng: picked.longitude,
+                  },
+                  target,
+                },
                 merge: true,
               });
             }}
@@ -45,7 +54,7 @@ export default function MapPickerScreen({ navigation, route }) {
         ),
       });
     }
-  }, [navigation, readOnly, picked, route.params]);
+  }, [navigation, readOnly, picked, route.params, target]);
 
   useEffect(() => {
     const init = route.params?.initialLocation;
@@ -81,7 +90,7 @@ export default function MapPickerScreen({ navigation, route }) {
     getCurrent();
   }, [route.params, readOnly]);
 
-  const handleMapPress = (e) => {
+  const handleMapLongPress = (e) => {
     if (readOnly) return;
     const { latitude, longitude } = e.nativeEvent.coordinate;
     setPicked({ latitude, longitude });
@@ -95,7 +104,7 @@ export default function MapPickerScreen({ navigation, route }) {
         initialRegion={region}
         region={region}
         onRegionChangeComplete={setRegion}
-        onPress={handleMapPress}
+        onLongPress={handleMapLongPress}
         scrollEnabled={true}
         zoomEnabled={true}
         rotateEnabled={true}
@@ -106,6 +115,10 @@ export default function MapPickerScreen({ navigation, route }) {
             coordinate={picked}
             title={customTitle || 'Location'}
             draggable={!readOnly}
+            onDragEnd={(e) => {
+              const { latitude, longitude } = e.nativeEvent.coordinate;
+              setPicked({ latitude, longitude });
+            }}
           />
         )}
       </MapView>

@@ -152,7 +152,6 @@ function UserSettingsScreen({ navigation }) {
       }
     }
 
-    // (3) Clean strings; clear times if NOT fixed
     const cleaned = Object.fromEntries(
       Object.entries(form).map(([k, v]) => (typeof v === 'string' ? [k, v.trim()] : [k, v]))
     );
@@ -172,7 +171,6 @@ function UserSettingsScreen({ navigation }) {
       setSaving(false);
     }
   }
-
 
   const isFixed = form.jobScheduleType === 'fixed';
   const initialForPicker = parseLatLng(form.jobLocation) || null;

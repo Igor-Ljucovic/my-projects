@@ -191,9 +191,11 @@ export default function UserSettingsForm({ form, setText, setBool, setValue, set
                 <Pressable
                     onPress={() => {
                         navigation.navigate('MapPicker', {
-                            returnTo: 'UserSettings',
                             initialLocation: initialForPicker,
+                            readOnly: false,
+                            title: 'Job location',
                             target: 'jobLocation',
+                            returnTo: 'UserSettings',
                         });
                     }}
                     style={userSettingsFormStyles.mapPickButton}
@@ -229,11 +231,12 @@ export default function UserSettingsForm({ form, setText, setBool, setValue, set
           const lat = Number(parts[0]); const lng = Number(parts[1]);
           return (Number.isFinite(lat) && Number.isFinite(lng)) ? { lat, lng } : null;
         })();
-
         navigation.navigate('MapPicker', {
-          returnTo: 'UserSettings',
           initialLocation: initialUserLoc,
+          readOnly: false,
+          title: 'Your location',
           target: 'userLocation',
+          returnTo: 'UserSettings',
         });
       }}
       style={userSettingsFormStyles.mapPickButton}
