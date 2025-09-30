@@ -23,8 +23,8 @@ function AuthStack() {
         contentStyle: { backgroundColor: Colors.primary100 },
       }}
     >
-      <Stack.Screen name="LogIn" component={LogInScreen} />
-      <Stack.Screen name="SignUp" component={SignUpScreen} />
+      <Stack.Screen name="LogIn" component={LogInScreen} title="Log in" />
+      <Stack.Screen name="SignUp" component={SignUpScreen} title = "Sign up" />
     </Stack.Navigator>
   );
 }

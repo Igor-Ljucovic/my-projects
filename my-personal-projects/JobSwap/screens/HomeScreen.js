@@ -52,7 +52,7 @@ export default function HomeScreen() {
       usersRef,
       (snap) => {
         try {
-          const matchPath = `${userId}/matchingSettings`;
+          const matchPath       = `${userId}/matchingSettings`;
           const fTitle          = toKey(snap.child(`${matchPath}/jobTitle`).val());
           const fCategory       = toKey(snap.child(`${matchPath}/jobCategory`).val());
           const fLanguage       = toKey(snap.child(`${matchPath}/jobLanguage`).val());
@@ -62,17 +62,17 @@ export default function HomeScreen() {
 
           const fMinStart = parseTimeToMins(snap.child(`${matchPath}/jobStartTime`).val());
           const fMaxEnd   = parseTimeToMins(snap.child(`${matchPath}/jobEndTime`).val());
-          const hasMin = !Number.isNaN(fMinStart);
-          const hasMax = !Number.isNaN(fMaxEnd);
+          const hasMin    = !Number.isNaN(fMinStart);
+          const hasMax    = !Number.isNaN(fMaxEnd);
 
           const fScheduleSet = nodeToStringSet(snap.child(`${matchPath}/jobScheduleTypes`));
           const fWorkSet     = nodeToStringSet(snap.child(`${matchPath}/workModels`));
 
           const maxKmRaw = snap.child(`${matchPath}/maxJobLocationDistanceKm`).val();
-          const maxKm = Number(maxKmRaw);
+          const maxKm    = Number(maxKmRaw);
           const myLocStr = snap.child(`${userId}/userSettings/userLocation`).val();
-          const myLoc = parseLatLng((myLocStr ?? '').toString());
-          const hasDist = !!myLoc && Number.isFinite(maxKm) && maxKm > 0;
+          const myLoc    = parseLatLng((myLocStr ?? '').toString());
+          const hasDist  = !!myLoc && Number.isFinite(maxKm) && maxKm > 0;
 
           const required = Math.max(0, Number(snap.child(`${matchPath}/minimumNumberOfCriteriaToMatch`).val()) || 0);
           setRequiredN(required);
@@ -115,38 +115,63 @@ export default function HomeScreen() {
               jobLocation: (us.child('jobLocation').val() ?? '').toString().trim(),
             };
 
-            const okText =
-              toKey(raw.jobTitle).includes(fTitle) &&
-              toKey(raw.jobCategory).includes(fCategory) &&
-              toKey(raw.jobLanguage).includes(fLanguage) &&
-              toKey(raw.jobQualifications).includes(fQualifications) &&
-              toKey(raw.jobTags).includes(fTags) &&
-              toKey(raw.jobLocationName).includes(fLocationName);
+            const titlePass    = fTitle        ? toKey(raw.jobTitle).includes(fTitle)                 : null;
+            const categoryPass = fCategory     ? toKey(raw.jobCategory).includes(fCategory)           : null;
+            const langPass     = fLanguage     ? toKey(raw.jobLanguage).includes(fLanguage)           : null;
+            const qualPass     = fQualifications ? toKey(raw.jobQualifications).includes(fQualifications) : null;
+            const tagsPass     = fTags         ? toKey(raw.jobTags).includes(fTags)                   : null;
+            const locNamePass  = fLocationName ? toKey(raw.jobLocationName).includes(fLocationName)   : null;
 
-            const oStart = parseTimeToMins(raw.jobStartTime);
-            const oEnd   = parseTimeToMins(raw.jobEndTime);
-            const okTimeMin = !hasMin || (!Number.isNaN(oStart) && oStart >= fMinStart);
-            const okTimeMax = !hasMax || (!Number.isNaN(oEnd)   && oEnd   <= fMaxEnd);
+            const oStart  = parseTimeToMins(raw.jobStartTime);
+            const oEnd    = parseTimeToMins(raw.jobEndTime);
+            const minPass = hasMin ? (!Number.isNaN(oStart) && oStart >= fMinStart) : null;
+            const maxPass = hasMax ? (!Number.isNaN(oEnd)   && oEnd   <= fMaxEnd)   : null;
 
             const oSchedule = toKey(raw.jobScheduleType);
             const oWork     = toKey(raw.workModel);
-            const okSched   = fScheduleSet.size === 0 || fScheduleSet.has(oSchedule);
-            const okWork    = fWorkSet.size === 0     || fWorkSet.has(oWork);
+            const schedPass = (fScheduleSet.size > 0) ? fScheduleSet.has(oSchedule) : null;
+            const workPass  = (fWorkSet.size > 0)     ? fWorkSet.has(oWork)         : null;
 
-            let okDist = true;
             let distanceKm = null;
-            let jobCoords = null;
-            const otherJobLoc = parseLatLng(raw.jobLocation);
-            if (hasDist) {
-              okDist = !!otherJobLoc && getHaversineDistanceKmFrom2LatLngPoints(myLoc, otherJobLoc) <= maxKm;
-              if (okDist && otherJobLoc) {
-                distanceKm = getHaversineDistanceKmFrom2LatLngPoints(myLoc, otherJobLoc);
-              }
-            }
-            if (otherJobLoc) jobCoords = otherJobLoc;
+            let jobCoords  = null;
 
-            if (okText && okTimeMin && okTimeMax && okSched && okWork && okDist && raw.jobTitle) {
-              acc.push({ uid: child.key, userSettings: raw, distanceKm, jobCoords });
+            const otherJobLoc = parseLatLng(raw.jobLocation);
+            if (otherJobLoc) {
+                jobCoords = otherJobLoc;
+                if (myLoc) {
+                    const d = getHaversineDistanceKmFrom2LatLngPoints(myLoc, otherJobLoc);
+                    if (Number.isFinite(d)) distanceKm = d;
+                }
+            }
+
+            const okDist = hasDist
+            ? (otherJobLoc && Number.isFinite(distanceKm) && distanceKm <= maxKm)
+            : true;
+            if (okDist && otherJobLoc) {
+                distanceKm = getHaversineDistanceKmFrom2LatLngPoints(myLoc, otherJobLoc);
+            }
+            
+            if (otherJobLoc) jobCoords = otherJobLoc;
+            const distPass = hasDist ? okDist : null;
+
+            // samo kriterijume koji nisu prazni uracunaj u min br. zadovoljenih kriterijuma
+            const flags = [
+            titlePass, categoryPass, langPass, qualPass, tagsPass, locNamePass,
+            minPass, maxPass, schedPass, workPass, distPass,
+            ].filter(v => v !== null);
+
+            const passed = flags.filter(Boolean).length;
+            const participates = flags.length;
+
+            if (participates >= required && passed >= required && raw.jobTitle) {
+            acc.push({
+                uid: child.key,
+                userSettings: raw,
+                distanceKm,
+                jobCoords,
+                _matchCount: passed,
+                _matchOf: participates,
+            });
             }
           });
 

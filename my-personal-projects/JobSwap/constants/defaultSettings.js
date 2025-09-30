@@ -30,5 +30,5 @@ export const MATCHING_SETTINGS_DEFAULT = {
   minJobStartTime: '',
   workModels: '',
   jobScheduleTypes: '',
-  minimumNumberOfCriteriaToMatch: 3
+  minimumNumberOfCriteriaToMatch: 2
 };
