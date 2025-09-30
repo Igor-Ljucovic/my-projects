@@ -48,31 +48,45 @@ export default function UserMatchingSettingsForm({ form, setText, setForm, handl
             </Field>
 
             <Field label="Job Country">
-                <View style={[userSettingsFormStyles.input, { paddingVertical: 0, backgroundColor: '#F6F7F9' }]}>
+            <View style={[userSettingsFormStyles.input, { paddingVertical: 0, backgroundColor: '#F6F7F9' }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10 }}>
-                    {form.jobCountry ? (
-                        <View style={{ marginRight: 8 }}>
-                        <Flag countryCode={form.jobCountry} />
+                {form.jobCountry ? (
+                    <View style={{ marginRight: 8 }}>
+                    <Flag countryCode={form.jobCountry} />
                     </View>
-                    ) : null}
-                    <CountryPicker
-                        countryCode={form.jobCountry || undefined}
-                        withFilter
-                        withFlag
-                        withCountryNameButton
-                        withAlphaFilter
-                        withEmoji
-                        onSelect={(c) => {
-                        // c.cca2 je naziv drzave u 2 slova, npr. RS (Serbia)
-                        setForm((prev) => ({ ...prev, jobCountry: c.cca2 }));
+                ) : null}
+
+                <CountryPicker
+                    key={`picker-${form.jobCountry || 'none'}`}
+                    countryCode={form.jobCountry || undefined}
+                    withFilter
+                    withFlag
+                    withCountryNameButton
+                    withAlphaFilter
+                    withEmoji
+                    onSelect={(c) => {
+                    setForm((prev) => ({ ...prev, jobCountry: c.cca2 }));
                     }}
                     containerButtonStyle={{ flex: 1 }}
-                    />
+                />
+
+                {form.jobCountry ? (
+                    <Pressable
+                    onPress={() => setForm((prev) => ({ ...prev, jobCountry: '' }))}
+                    hitSlop={12}
+                    style={{
+                        paddingHorizontal: 10,
+                        paddingVertical: 4,
+                        borderRadius: 999,
+                        backgroundColor: '#e5e7eb',
+                        marginLeft: 8,
+                    }}
+                    >
+                    <Text style={{ fontSize: 12, color: '#374151' }}>Clear</Text>
+                    </Pressable>
+                ) : null}
                 </View>
-                </View>
-                {!!form.jobCountry && (
-                <Text style={userSettingsFormStyles.helpText}>Selected: {form.jobCountry}</Text>
-                )}
+            </View>
             </Field>
 
             <Field label="Job Tags">

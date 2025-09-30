@@ -21,12 +21,21 @@ function MatchingSettingsScreen() {
   );
 
   useEffect(() => {
-    setForm(prev => {
-      if ((prev.jobStartTime ?? '') === '' && (prev.jobEndTime ?? '') === '') {
-        return prev;
-      }
-      return { ...prev, jobStartTime: '', jobEndTime: '' };
-    });
+    const raw = form.jobScheduleTypes;
+    const arr = Array.isArray(raw)
+      ? raw
+      : typeof raw === 'string' && raw
+      ? [raw]
+      : raw && typeof raw === 'object'
+      ? Object.values(raw)
+      : [];
+
+    const normalized = arr.map(v => (v ?? '').toString().trim().toLowerCase());
+    const hasFixed = normalized.includes('fixed');
+
+    if (!hasFixed && ((form.jobStartTime ?? '') !== '' || (form.jobEndTime ?? '') !== '')) {
+      setForm(prev => ({ ...prev, jobStartTime: '', jobEndTime: '' }));
+    }
   }, [form.jobScheduleTypes]);
 
   useEffect(() => {
@@ -86,11 +95,11 @@ function MatchingSettingsScreen() {
   }
 
   async function handleSave() {
-  if (!path) return;
+    if (!path) return;
 
-  const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+    const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
-  const rawSchedule =
+    const rawSchedule =
     Array.isArray(form.jobScheduleTypes)
       ? form.jobScheduleTypes
       : (typeof form.jobScheduleTypes === 'string' && form.jobScheduleTypes)
@@ -99,18 +108,27 @@ function MatchingSettingsScreen() {
           ? Object.values(form.jobScheduleTypes)
           : [];
 
-  const VALID_SCHEDULE = new Set(['fixed', 'flexible', 'rotating', 'oncall']);
-  const scheduleArr = Array.from(
-    new Set(
-      rawSchedule
-        .map(v => (v ?? '').toString().trim())
-        .filter(v => v && VALID_SCHEDULE.has(v))
-    )
-  );
+    const VALID_SCHEDULE = new Set(['fixed', 'flexible', 'rotating', 'on-call']);
 
-  const hasFixed = scheduleArr.includes('fixed');
+    const scheduleArr = Array.from(
+      new Set(
+        rawSchedule
+          .map(v => (v ?? '').toString().trim().toLowerCase())
+          .filter(v => v && VALID_SCHEDULE.has(v))
+      )
+    );
 
-  if (hasFixed) {
+    const hasFixed = scheduleArr.includes('fixed');
+
+    if (!hasFixed && ((form.jobStartTime ?? '') !== '' || (form.jobEndTime ?? '') !== '')) {
+      Alert.alert(
+        'Schedule/Time mismatch',
+        'You entered a start/end time but did not select the "fixed" schedule type. Either add "fixed" or clear the time fields.'
+      );
+      return;
+    }
+
+    if (hasFixed) {
     if (!TIME_RE.test(form.jobStartTime || '')) {
       Alert.alert('Invalid time', 'Please enter Start Time in HH:MM (00:00–23:59).');
       return;
@@ -119,9 +137,24 @@ function MatchingSettingsScreen() {
       Alert.alert('Invalid time', 'Please enter End Time in HH:MM (00:00–23:59).');
       return;
     }
+
+    const toMinutes = (hhmm) => {
+      const [h, m] = (hhmm || '00:00').split(':').map(n => parseInt(n, 10));
+      return h * 60 + m;
+    };
+    const startMin = toMinutes(form.jobStartTime);
+    const endMin   = toMinutes(form.jobEndTime);
+
+    if (endMin <= startMin) {
+      Alert.alert(
+        'Time range invalid',
+        'End time must be later than start time for a fixed schedule.'
+      );
+      return;
+    }
   }
 
-  const rawWfh =
+  const rawWorkModels =
     Array.isArray(form.workModels)
       ? form.workModels
       : (typeof form.workModels === 'string' && form.workModels)
@@ -130,12 +163,12 @@ function MatchingSettingsScreen() {
           ? Object.values(form.workModels)
           : [];
 
-  const VALID_WFH = new Set(['onsite', 'remote', 'hybrid']);
-  const wfhArr = Array.from(
+  const validWorkModels = new Set(['onsite', 'remote', 'hybrid']);
+  const workModels = Array.from(
     new Set(
-      rawWfh
-        .map(v => (v ?? '').toString().trim())
-        .filter(v => v && VALID_WFH.has(v))
+      rawWorkModels
+        .map(v => (v ?? '').toString().trim().toLowerCase())
+        .filter(v => v && validWorkModels.has(v))
     )
   );
 
@@ -146,7 +179,7 @@ function MatchingSettingsScreen() {
   }
 
   payload.jobScheduleTypes = scheduleArr.length ? scheduleArr : { 0: '' };
-  payload.workModels = wfhArr.length ? wfhArr : { 0: '' };
+  payload.workModels = workModels.length ? workModels : { 0: '' };
 
   if (!hasFixed) {
     payload.jobStartTime = '';

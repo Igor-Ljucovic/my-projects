@@ -59,7 +59,7 @@ function ScheduleTypesToggleMatchingSettings({ value = [], onChange }) {
     { key: 'fixed', label: 'Fixed' },
     { key: 'flexible', label: 'Flexible' },
     { key: 'rotating', label: 'Rotating' },
-    { key: 'oncall', label: 'On-call' },
+    { key: 'on-call', label: 'On-call' },
   ];
 
   function toggle(key) {

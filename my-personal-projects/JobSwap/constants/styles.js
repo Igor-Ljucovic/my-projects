@@ -108,4 +108,14 @@ export const userSettingsFormStyles = StyleSheet.create({
     color: 'white',
     fontWeight: '600',
   },
+  logoutButton: {
+    backgroundColor: Colors.primary500,
+    borderRadius: 10,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    marginBottom: 10,
+    flexDirection: 'row', 
+    alignItems: 'center'
+  }
 });

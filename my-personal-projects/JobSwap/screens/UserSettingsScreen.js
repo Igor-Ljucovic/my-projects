@@ -1,19 +1,19 @@
 import { useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
-import { View, Text, ActivityIndicator, Alert } from 'react-native';
+import { Alert } from 'react-native';
 import { ref, onValue, update, set } from 'firebase/database';
 import { AuthContext } from '../store/auth-context';
 import { db } from '../util/firebase';
 import { USER_SETTINGS_DEFAULT } from '../constants/defaultSettings';
 import IconButton from '../components/UI/IconButton';
 import { parseLatLng } from '../util/geo';
-import { userSettingsFormStyles } from '../constants/styles';
 import UserSettingsForm from '../components/UI/UserSettingsForm';
 
 
 function UserSettingsScreen({ navigation }) {
   const { userId } = useContext(AuthContext);
   const route = useRoute();
+  const authCtx = useContext(AuthContext);
 
   const DEFAULTS = { ...USER_SETTINGS_DEFAULT };
   const [form, setForm] = useState(DEFAULTS);
@@ -118,20 +118,48 @@ function UserSettingsScreen({ navigation }) {
 
     const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
-    if (form.jobScheduleType === 'fixed') {
-      if (!TIME_RE.test(form.jobStartTime || '')) {
+    const isFixed = form.jobScheduleType === 'fixed';
+    const start = (form.jobStartTime || '').trim();
+    const end   = (form.jobEndTime || '').trim();
+
+    if (!isFixed && (start !== '' || end !== '')) {
+      Alert.alert(
+        'Schedule/Time mismatch',
+        'You entered a start/end time but did not select the "fixed" schedule type. Either change schedule to "fixed" or clear the time fields.'
+      );
+      return;
+    }
+
+    if (isFixed) {
+      if (!TIME_RE.test(start)) {
         Alert.alert('Invalid time', 'Please enter Start Time in HH:MM (00:00–23:59).');
         return;
       }
-      if (!TIME_RE.test(form.jobEndTime || '')) {
+      if (!TIME_RE.test(end)) {
         Alert.alert('Invalid time', 'Please enter End Time in HH:MM (00:00–23:59).');
+        return;
+      }
+      const toMinutes = (hhmm) => {
+        const [h, m] = hhmm.split(':').map(n => parseInt(n, 10));
+        return h * 60 + m;
+      };
+      if (toMinutes(end) <= toMinutes(start)) {
+        Alert.alert(
+          'Time range invalid',
+          'End time must be later than start time for a fixed schedule.'
+        );
         return;
       }
     }
 
+    // (3) Clean strings; clear times if NOT fixed
     const cleaned = Object.fromEntries(
       Object.entries(form).map(([k, v]) => (typeof v === 'string' ? [k, v.trim()] : [k, v]))
     );
+    if (!isFixed) {
+      cleaned.jobStartTime = '';
+      cleaned.jobEndTime = '';
+    }
 
     setSaving(true);
     try {
@@ -145,14 +173,6 @@ function UserSettingsScreen({ navigation }) {
     }
   }
 
-  if (loading) {
-    return (
-      <View style={userSettingsFormStyles.center}>
-        <ActivityIndicator size="large" />
-        <Text style={{ marginTop: 8 }}>Loading settings...</Text>
-      </View>
-    );
-  }
 
   const isFixed = form.jobScheduleType === 'fixed';
   const initialForPicker = parseLatLng(form.jobLocation) || null;
@@ -169,6 +189,7 @@ function UserSettingsScreen({ navigation }) {
       navigation={navigation}
       handleSave={handleSave}
       saving={saving}
+      authCtx={authCtx}
     />
   );
 }
