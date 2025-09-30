@@ -6,21 +6,23 @@ import { AuthContext } from '../store/auth-context';
 import { createUser } from '../util/auth';
 import { ref, update } from 'firebase/database';
 import { db } from '../util/firebase';
-import { PROFILE_SETTINGS_DEFAULT, MATCHING_SETTINGS_DEFAULT } from '../constants/defaultSettings';
+import { USER_SETTINGS_DEFAULT, MATCHING_SETTINGS_DEFAULT } from '../constants/defaultSettings';
 
 function SignUpScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const authCtx = useContext(AuthContext);
-
-  console.log('SignUpScreen authCtx.userId=', authCtx.userId);
 
   async function signupHandler({ email, password }) {
     setIsAuthenticating(true);
     try {
       const token = await createUser(email, password);
       if (!token) throw new Error('Invalid register response.');
-        authCtx.authenticate(token);
-      await setDefaultSettings(userId);
+        
+      await authCtx.authenticate(token);
+
+      if (!token.idToken) throw new Error('Missing userId from register response.');
+      await setDefaultSettings(token.userId);
+
     } catch (err) {
       console.log(err);
       Alert.alert('Authentication failed', err?.message ?? 'Could not create user, please check your input.');
@@ -29,8 +31,7 @@ function SignUpScreen() {
     }
   }
 
-  if (isAuthenticating)
-    return <LoadingOverlay message="Creating user..." />;
+  if (isAuthenticating) return <LoadingOverlay message="Creating user..." />;
   
   return <AuthContent isLogin={false} onAuthenticate={signupHandler} />;
 }
@@ -38,7 +39,7 @@ function SignUpScreen() {
 
 async function setDefaultSettings(userId) {
   const updates = {
-    [`users/${userId}/profileSettings`]: PROFILE_SETTINGS_DEFAULT,
+    [`users/${userId}/userSettings`]: USER_SETTINGS_DEFAULT,
     [`users/${userId}/matchingSettings`]: MATCHING_SETTINGS_DEFAULT,
   };
   await update(ref(db), updates);
