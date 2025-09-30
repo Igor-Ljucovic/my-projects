@@ -195,6 +195,7 @@ export default function HomeScreen() {
             <View style={homeScreenStyles.page}>
               <View {...pan.panHandlers} style={homeScreenStyles.card}>
                 {renderLine('Job title', item.userSettings.jobTitle)}
+                {renderLine('Job description', item.userSettings.jobDescription)}
                 {renderLine('Category', item.userSettings.jobCategory)}
                 {renderLine('Language', item.userSettings.jobLanguage)}
                 {renderLine('Country', item.userSettings.jobCountry)}
@@ -208,12 +209,6 @@ export default function HomeScreen() {
                 {typeof item.distanceKm === 'number' && Number.isFinite(item.distanceKm) && (
                   <Text style={homeScreenStyles.line}>
                     <Label>Distance:</Label> {item.distanceKm.toFixed(1)} km
-                  </Text>
-                )}
-
-                {hasText(item.userSettings.jobDescription) && (
-                  <Text style={[homeScreenStyles.line, homeScreenStyles.desc]}>
-                    {item.userSettings.jobDescription.trim()}
                   </Text>
                 )}
 
