@@ -28,7 +28,7 @@ function UserSettingsScreen({ navigation }) {
   const goHome = () => {
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Welcome' }],
+      routes: [{ name: 'HomeScreen' }],
     });
   };
 

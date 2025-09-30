@@ -16,4 +16,10 @@ function clampHHMM(hhmm) {
   return `${String(H).padStart(2, '0')}:${String(M).padStart(2, '0')}`;
 }
 
-export { onlyDigits, formatHHMM, clampHHMM };
+// parsira HH:MM u broj minuta, vrati null ako nije validan format prosledjen
+function parseTimeToMins(hhmm) {
+  const m = /^([01]\d|2[0-3]):([0-5]\d)$/.exec((hhmm ?? '').toString().trim());
+  return m ? Number(m[1]) * 60 + Number(m[2]) : NaN;
+}
+
+export { onlyDigits, formatHHMM, clampHHMM, parseTimeToMins };

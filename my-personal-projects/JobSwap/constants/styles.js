@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 export const Colors = {
   primary100: '#f9beda',
@@ -118,4 +118,41 @@ export const userSettingsFormStyles = StyleSheet.create({
     flexDirection: 'row', 
     alignItems: 'center'
   }
+});
+
+const { width } = Dimensions.get('window');
+
+export const homeScreenStyles = StyleSheet.create({
+  container: { flex: 1, paddingTop: 36, backgroundColor: '#F6F7F9' },
+  header: { fontSize: 22, fontWeight: '700', textAlign: 'center' },
+  hint: { marginTop: 16, textAlign: 'center', opacity: 0.7, paddingHorizontal: 16 },
+  page: { width, padding: 16, paddingTop: 20 },
+  card: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    marginBottom: 40
+  },
+  title: { fontSize: 20, fontWeight: '700', marginBottom: 8 },
+  line: { fontSize: 15, marginTop: 6 },
+  label: { fontWeight: '600' },
+  desc: { marginTop: 10, lineHeight: 20, opacity: 0.9 },
+  swipeTip: { textAlign: 'center', marginTop: 16, opacity: 0.6 },
+  counter: { position: 'absolute', bottom: 65, alignSelf: 'center', opacity: 0.6 },
+
+  mapBtn: {
+    marginTop: 12,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: '#0A84FF',
+  },
+  mapBtnText: { color: 'white', fontWeight: '600' },
 });

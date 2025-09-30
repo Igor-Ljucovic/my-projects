@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import LogInScreen from './screens/LogInScreen';
 import SignUpScreen from './screens/SignUpScreen';
-import WelcomeScreen from './screens/WelcomeScreen';
+import HomeScreen from './screens/HomeScreen';
 import { Colors } from './constants/styles';
 import AuthContextProvider, { AuthContext } from './store/auth-context';
 import UserSettingsScreen from './screens/UserSettingsScreen';
@@ -30,7 +30,6 @@ function AuthStack() {
 }
 
 function AuthenticatedStack() {
-  const authCtx = useContext(AuthContext);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -40,12 +39,13 @@ function AuthenticatedStack() {
       }}
     >
       <Stack.Screen
-        name="Welcome"
-        component={WelcomeScreen}
+        name="HomeScreen"
+        component={HomeScreen}
         options={{
           headerRight: ({ tintColor }) => (
             <SettingsButton tintColor={tintColor} />
           ),
+          title: 'JobSwap',
         }}
       />
       <Stack.Screen 
