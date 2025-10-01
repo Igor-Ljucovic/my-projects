@@ -101,9 +101,9 @@ export default function UserMatchingSettingsForm({ form, setText, setForm, handl
             </View>
 
             <View style={userSettingsFormStyles.card}>
-            <Text style={userSettingsFormStyles.sectionTitle}>Time & Flexibility</Text>
+            <Text style={userSettingsFormStyles.sectionTitle}>Job Time & Flexibility</Text>
 
-            <Field label="Schedule Type(s)">
+            <Field label="Job Schedule Type(s)">
             <ScheduleTypesToggleMatchingSettings
                 value={form.jobScheduleTypes || []}
                 onChange={(updater) =>
@@ -119,7 +119,7 @@ export default function UserMatchingSettingsForm({ form, setText, setForm, handl
             </Field>
 
 
-            <Field label="Work Arrangement(s)">
+            <Field label="Job Work Model(s)">
             <WorkModelsToggleMatchingSettings
                 value={form.workModels || []}
                 onChange={(updater) =>
@@ -134,14 +134,14 @@ export default function UserMatchingSettingsForm({ form, setText, setForm, handl
             />
             </Field>
 
-            <Field label="Earliest Start Time">
+            <Field label="Earliest Job Start Time">
                 <TimeInput
                     value={form.jobStartTime}
                     onChangeText={setText('jobStartTime')}
                 />
             </Field>
 
-            <Field label="Latest End Time">
+            <Field label="Latest Job End Time">
                 <TimeInput
                     value={form.jobEndTime}
                     onChangeText={setText('jobEndTime')}
@@ -152,7 +152,7 @@ export default function UserMatchingSettingsForm({ form, setText, setForm, handl
             <View style={userSettingsFormStyles.card}>
             <Text style={userSettingsFormStyles.sectionTitle}>Location</Text>
 
-            <Field label="Max location distance (km)">
+            <Field label="Max Job Location Distance (km)">
                 <TextInput
                     value={String(form.maxJobLocationDistanceKm ?? '')}
                     onChangeText={(txt) => {
@@ -172,7 +172,7 @@ export default function UserMatchingSettingsForm({ form, setText, setForm, handl
             <View style={userSettingsFormStyles.card}>
             <Text style={userSettingsFormStyles.sectionTitle}>General</Text>
 
-            <Field label="Minimum number of criteria to match">
+            <Field label="Minimum Number Of Criteria To Match">
                 <Text style={{ fontSize:9, marginBottom: 4 }}>
                     (not including the max distance, that criterium is always mandatory)
                 </Text>

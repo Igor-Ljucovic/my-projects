@@ -217,24 +217,28 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <View style={homeScreenStyles.page}>
               <View {...pan.panHandlers} style={homeScreenStyles.card}>
-                {renderLine('Job title', item.userSettings.jobTitle)}
-                {renderLine('Job description', item.userSettings.jobDescription)}
-                {renderLine('Category', item.userSettings.jobCategory)}
-                {renderLine('Language', item.userSettings.jobLanguage)}
-                {renderLine('Country', item.userSettings.jobCountry)}
-                {renderLine('Location', item.userSettings.jobLocationName)}
-                {renderLine('Schedule', item.userSettings.jobScheduleType)}
-                {renderLine('Work model', item.userSettings.workModel)}
-                {renderTimeLine(item.userSettings)}
-                {renderLine('Qualifications', item.userSettings.jobQualifications)}
-                {renderLine('Tags', item.userSettings.jobTags)}
-
+                
                 {typeof item.distanceKm === 'number' && Number.isFinite(item.distanceKm) && (
                   <Text style={homeScreenStyles.line}>
                     <Label>Distance:</Label> {item.distanceKm.toFixed(1)} km
                   </Text>
                 )}
 
+                {renderLine('Title', item.userSettings.jobTitle)}
+                {renderLine('Category', item.userSettings.jobCategory)}
+                {renderLine('Description', item.userSettings.jobDescription)}
+                {renderLine('Qualifications', item.userSettings.jobQualifications)}
+                {renderLine('Language', item.userSettings.jobLanguage)}
+                
+                {renderLine('Schedule', item.userSettings.jobScheduleType)}
+                {renderLine('Work model', item.userSettings.workModel)}
+                {renderTimeLine(item.userSettings)}
+
+                {renderLine('Tags', item.userSettings.jobTags)}
+                
+                {renderLine('Country', item.userSettings.jobCountry)}
+                {renderLine('Location', item.userSettings.jobLocationName)}
+                
                 {item.jobCoords && (
                   <Pressable
                     style={homeScreenStyles.mapBtn}

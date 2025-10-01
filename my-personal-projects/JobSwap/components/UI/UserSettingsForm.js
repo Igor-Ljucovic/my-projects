@@ -12,12 +12,12 @@ export default function UserSettingsForm({ form, setText, setBool, setValue, set
                 <Text style={userSettingsFormStyles.sectionTitle}>Privacy & Notifications</Text>
 
                 <View style={userSettingsFormStyles.row}>
-                    <Text style={userSettingsFormStyles.rowLabel}>Public Profile</Text>
+                    <Text style={userSettingsFormStyles.rowLabel}>Make my profile visible to others</Text>
                     <Switch value={form.publicProfile} onValueChange={setBool('publicProfile')} />
                 </View>
 
                 <View style={userSettingsFormStyles.row}>
-                    <Text style={userSettingsFormStyles.rowLabel}>Message Notifications</Text>
+                    <Text style={userSettingsFormStyles.rowLabel}>Send me message notifications</Text>
                     <Switch
                         value={form.getMessageNotifications}
                         onValueChange={setBool('getMessageNotifications')}
@@ -129,23 +129,23 @@ export default function UserSettingsForm({ form, setText, setBool, setValue, set
             </View>
 
             <View style={userSettingsFormStyles.card}>
-            <Text style={userSettingsFormStyles.sectionTitle}>Time & Flexibility</Text>
+            <Text style={userSettingsFormStyles.sectionTitle}>Job Time & Flexibility</Text>
 
-            <Field label="Schedule Type">
+            <Field label="Job Schedule Type">
                 <ScheduleTypeToggleUserSettings
                     value={form.jobScheduleType}
                     onChange={(val) => setValue('jobScheduleType', val)}
                 />
             </Field>
 
-            <Field label="Work Model">
+            <Field label="Job Work Model">
                 <WorkModelToggleUserSettings
                     value={form.workModel}
                     onChange={(val) => setValue('workModel', val)}
                 />
             </Field>
 
-            <Field label="Start Time">
+            <Field label="Job Start Time">
                 <TimeInput
                     value={form.jobStartTime}
                     onChangeText={setText('jobStartTime')}
