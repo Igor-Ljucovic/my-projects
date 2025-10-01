@@ -82,7 +82,6 @@ export default function HomeScreen() {
             hasMin, hasMax,
             fScheduleSet.size > 0,
             fWorkSet.size > 0,
-            hasDist,
           ];
           const setCount = setFlags.filter(Boolean).length;
           if (setCount < required) {
@@ -152,12 +151,11 @@ export default function HomeScreen() {
             }
             
             if (otherJobLoc) jobCoords = otherJobLoc;
-            const distPass = hasDist ? okDist : null;
 
             // samo kriterijume koji nisu prazni uracunaj u min br. zadovoljenih kriterijuma
             const flags = [
             titlePass, categoryPass, langPass, qualPass, tagsPass, locNamePass,
-            minPass, maxPass, schedPass, workPass, distPass,
+            minPass, maxPass, schedPass, workPass,
             ].filter(v => v !== null);
 
             const passed = flags.filter(Boolean).length;
@@ -178,7 +176,7 @@ export default function HomeScreen() {
           setCards(acc);
           setIndex(0);
         } catch (e) {
-          console.log('HomeScreen parse error:', e);
+          console.log('HomeScreen error:', e);
         } finally {
           setLoading(false);
         }

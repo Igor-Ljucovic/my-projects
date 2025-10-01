@@ -173,6 +173,9 @@ export default function UserMatchingSettingsForm({ form, setText, setForm, handl
             <Text style={userSettingsFormStyles.sectionTitle}>General</Text>
 
             <Field label="Minimum number of criteria to match">
+                <Text style={{ fontSize:9, marginBottom: 4 }}>
+                    (not including the max distance, that criterium is always mandatory)
+                </Text>
                 <TextInput
                     value={String(form.minimumNumberOfCriteriaToMatch ?? '')}
                     onChangeText={(txt) => {
