@@ -9,7 +9,12 @@ import { parseTimeToMins } from '../util/time';
 import { toKey, nodeToStringSet, hasText, Label, renderLine } from '../util/ui';
 import { homeScreenStyles } from '../constants/styles';
 
+
 const { width } = Dimensions.get('window');
+
+function makeChatId(a, b) {
+  return [a, b].sort().join('_');
+}
 
 function renderTimeLine(us) {
   const a = (us.jobStartTime || '').trim();
@@ -34,7 +39,15 @@ export default function HomeScreen() {
       onMoveShouldSetPanResponder: (_e, g) => Math.abs(g.dx) > 12 && Math.abs(g.dy) < 20,
       onPanResponderRelease: (_e, g) => {
         if (g.dx > 60 && Math.abs(g.vx) > 0.3) {
-          Alert.alert('Nothing, messaging will be added here');
+          const target = cards[index];
+          if (target?.uid) {
+            const chatId = makeChatId(userId, target.uid);
+            navigation.navigate('Chat', {
+              chatId,
+              otherUid: target.uid,
+              otherProfile: target.userSettings || null,
+            });
+          }
         }
       },
     })
@@ -201,7 +214,8 @@ export default function HomeScreen() {
       ) : needsMore ? (
         <Text style={homeScreenStyles.hint}>Set at least {requiredN} matching criteria to see cards.</Text>
       ) : cards.length === 0 ? (
-        <Text style={homeScreenStyles.hint}>No matching jobs for your matching settings yet.</Text>
+        <Text style={homeScreenStyles.hint}>No matching jobs for your matching settings yet, 
+        or you haven't set your location in the settings yet.</Text>
       ) : (
         <FlatList
           ref={listRef}
@@ -256,13 +270,28 @@ export default function HomeScreen() {
                   >
                     <Text style={homeScreenStyles.mapBtnText}>View on map</Text>
                   </Pressable>
+                  
                 )}
+                <Pressable
+                  style={[homeScreenStyles.mapBtn, homeScreenStyles.chatBtn]}
+                  onPress={() => {
+                    const chatId = makeChatId(userId, item.uid);
+                    navigation.navigate('Chat', {
+                      chatId,
+                      otherUid: item.uid,
+                      otherProfile: item.userSettings || null,
+                    });
+                  }}
+                  hitSlop={8}
+                >
+                  <Text style={homeScreenStyles.mapBtnText}>Message them</Text>
+                </Pressable>
               </View>
             </View>
           )}
         />
       )}
-
+      
       {cards.length > 0 && (
         <Text style={homeScreenStyles.counter}>
           {index + 1}/{cards.length}

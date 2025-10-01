@@ -155,4 +155,50 @@ export const homeScreenStyles = StyleSheet.create({
     backgroundColor: '#0A84FF',
   },
   mapBtnText: { color: 'white', fontWeight: '600' },
+  chatBtn: {
+    marginTop: 8,
+    backgroundColor: '#0A84FF',
+  },
+});
+
+export const chatScreenStyles = StyleSheet.create({
+  wrap: { flex: 1, backgroundColor: '#0f172a' },
+  listContent: { padding: 12, paddingBottom: 8 },
+  bubble: {
+    maxWidth: '78%',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 14,
+    marginVertical: 6,
+  },
+  mine: { alignSelf: 'flex-end', backgroundColor: '#1d4ed8' },
+  their: { alignSelf: 'flex-start', backgroundColor: '#334155' },
+  msgText: { color: 'white', fontSize: 16 },
+  composerRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 8,
+    paddingTop: 6,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#334155',
+    backgroundColor: '#0b1220',
+  },
+  input: {
+    flex: 1,
+    minHeight: 40,
+    maxHeight: 120,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    backgroundColor: '#111827',
+    color: 'white',
+    borderRadius: 10,
+  },
+  sendBtn: {
+    marginLeft: 8,
+    alignSelf: 'flex-end',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: '#2563eb',
+  },
+  sendTxt: { color: 'white', fontWeight: '600' },
 });

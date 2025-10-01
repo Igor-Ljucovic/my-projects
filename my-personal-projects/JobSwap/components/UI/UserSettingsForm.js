@@ -207,7 +207,7 @@ export default function UserSettingsForm({ form, setText, setBool, setValue, set
                 </View>
             </View>
 
-            <Field label="Your Location (optional, for distance calculation)">
+            <Field label="Your Location">
                 <View style={[userSettingsFormStyles.input, { backgroundColor: '#e5e7eb' }]}>
                 <Text
                     style={{

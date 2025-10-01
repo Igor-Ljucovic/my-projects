@@ -11,6 +11,7 @@ import UserSettingsScreen from './screens/UserSettingsScreen';
 import MatchingSettingsScreen from './screens/MatchingSettingsScreen';
 import SettingsButton from './components/UI/SettingsButton';
 import MapPickerScreen from './screens/MapPickerScreen';
+import ChatScreen from './screens/ChatScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -52,6 +53,11 @@ function AuthenticatedStack() {
         name="MapPicker" 
         component={MapPickerScreen} 
         options={{ title: 'Pick Location' }} 
+      />
+            <Stack.Screen
+        name="Chat"
+        component={ChatScreen}
+        options={{ title: 'Chat' }}
       />
       <Stack.Screen
         name="UserSettings"
