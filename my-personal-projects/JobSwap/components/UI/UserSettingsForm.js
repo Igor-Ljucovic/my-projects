@@ -1,7 +1,7 @@
 import { ScrollView, View, Text, TextInput, Switch, Pressable } from 'react-native';
 import CountryPicker, { Flag } from 'react-native-country-picker-modal';
 import { Field, TimeInput, ScheduleTypeToggleUserSettings, WorkModelToggleUserSettings } from '../../util/settings';
-import { userSettingsFormStyles, Colors } from '../../constants/styles';
+import { userSettingsFormStyles } from '../../constants/styles';
 import IconButton from '../UI/IconButton';
 
 export default function UserSettingsForm({ form, setText, setBool, setValue, setForm, isFixed, initialForPicker, navigation, handleSave, saving, authCtx }) {

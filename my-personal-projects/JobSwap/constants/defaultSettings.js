@@ -6,6 +6,8 @@ export const USER_SETTINGS_DEFAULT = {
   jobDescription: '',
   jobLanguage: '',
   jobLocation: '',
+  jobLocationLatitude: '',
+  jobLocationLongitude: '',
   jobLocationName: '',
   jobCountry: '',
   jobQualifications: '',
