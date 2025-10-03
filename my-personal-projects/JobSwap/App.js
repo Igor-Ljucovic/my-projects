@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -15,6 +15,16 @@ import ChatsButton from './components/UI/ChatsButton';
 import MapPickerScreen from './screens/MapPickerScreen';
 import ChatScreen from './screens/ChatScreen';
 import ConversationsScreen from './screens/ConversationsScreen';
+import * as Notifications from 'expo-notifications';
+import { navigationRef } from './util/nav';
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
 
 const Stack = createNativeStackNavigator();
 
@@ -88,7 +98,7 @@ function Navigation() {
   const authCtx = useContext(AuthContext);
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       {!authCtx.isAuthenticated && <AuthStack />}
       {authCtx.isAuthenticated && <AuthenticatedStack />}
     </NavigationContainer>
@@ -96,7 +106,20 @@ function Navigation() {
 }
 
 export default function App() {
+  
+  useEffect(() => {
+    const sub = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response?.notification?.request?.content?.data || {};
+      const { chatId, senderUid } = data;
+      if (chatId && senderUid) {
+        navigationRef.current?.navigate('Chat', { chatId, otherUid: senderUid });
+      }
+    });
+    return () => sub.remove();
+  }, []);
+
   return (
+    
     <>
       <StatusBar style="light" />
       <AuthContextProvider>

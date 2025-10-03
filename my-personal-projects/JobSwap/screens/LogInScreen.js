@@ -4,17 +4,22 @@ import AuthContent from '../components/Auth/AuthContent';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
 import { AuthContext } from '../store/auth-context';
 import { login } from '../util/auth';
+import { registerForPushAndStoreAsync } from '../util/push';
 
 function LogInScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const authCtx = useContext(AuthContext);
-
+  
   async function loginHandler({ email, password }) {
     setIsAuthenticating(true);
     try {
       const token = await login(email, password);
+
       if (!token) throw new Error('Invalid login response.');
-        authCtx.authenticate(token);  
+
+      authCtx.authenticate(token); 
+
+      registerForPushAndStoreAsync(token.userId).catch(()=>{}); 
     } catch (err) {
       console.log(err);
       Alert.alert('Authentication failed!', err?.message ?? 'Could not log you in. Please check your credentials!');

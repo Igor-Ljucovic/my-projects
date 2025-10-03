@@ -5,6 +5,7 @@ import FlatButton from '../UI/FlatButton';
 import AuthForm from './AuthForm';
 import { Colors } from '../../constants/styles';
 
+
 function AuthContent({ isLogin, onAuthenticate }) {
   const navigation = useNavigation();
 
@@ -29,9 +30,8 @@ function AuthContent({ isLogin, onAuthenticate }) {
     password = password.trim();
 
     // something@something.something
-    const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); 
+    const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     
-
     // pazi, ovde ako promenis nesto, moras i ispod u poruci o gresci!
     const passwordHasMinLength = password.length >= 10;
     const passwordHasUpper = /[A-Z]/.test(password); 

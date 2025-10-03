@@ -7,6 +7,8 @@ import { createUser } from '../util/auth';
 import { ref, update } from 'firebase/database';
 import { db } from '../util/firebase';
 import { USER_SETTINGS_DEFAULT, MATCHING_SETTINGS_DEFAULT } from '../constants/defaultSettings';
+import { registerForPushAndStoreAsync } from '../util/push';
+import { deleteUser } from 'firebase/auth';
 
 function SignUpScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -18,7 +20,9 @@ function SignUpScreen() {
       const token = await createUser(email, password);
       if (!token) throw new Error('Invalid register response.');
         
-      await authCtx.authenticate(token);
+      authCtx.authenticate(token);
+      
+      registerForPushAndStoreAsync(token.userId).catch(()=>{});
 
       if (!token.idToken) throw new Error('Missing userId from register response.');
       await setDefaultSettings(token.userId);
@@ -42,7 +46,25 @@ async function setDefaultSettings(userId) {
     [`users/${userId}/userSettings`]: USER_SETTINGS_DEFAULT,
     [`users/${userId}/matchingSettings`]: MATCHING_SETTINGS_DEFAULT,
   };
-  await update(ref(db), updates);
+  try {
+    await update(ref(db), updates);
+  } catch (err) {
+
+    console.error('Failed to create default settings, deleting user...', err);
+
+    const currentUser = auth.currentUser;
+    
+    if (currentUser && currentUser.uid === userId) {
+      try {
+        await deleteUser(currentUser);
+        console.log('User deleted because default settings setup failed');
+      } catch (delErr) {
+        console.error('Failed to delete user after settings failure:', delErr);
+      }
+    }
+
+    throw err; // da zna i korisnik da je doslo do greske
+  }
 }
 
 export default SignUpScreen;

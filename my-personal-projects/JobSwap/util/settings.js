@@ -138,7 +138,7 @@ function WorkModelsToggleMatchingSettings({ value = [], onChange }) {
   }
 
   return (
-    <View style={userSettingsFormStyles.toggleRow /* single row, no wrap */}>
+    <View style={userSettingsFormStyles.toggleRow}>
       {OPTIONS.map(opt => {
         const selected = value.includes(opt.key);
         return (
@@ -146,7 +146,7 @@ function WorkModelsToggleMatchingSettings({ value = [], onChange }) {
             key={opt.key}
             onPress={() => toggle(opt.key)}
             style={[
-              userSettingsFormStyles.toggleBtn,    // <- should already have flex: 1
+              userSettingsFormStyles.toggleBtn,
               selected && userSettingsFormStyles.toggleActive,
             ]}
             accessibilityRole="button"

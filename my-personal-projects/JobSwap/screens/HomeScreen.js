@@ -98,15 +98,6 @@ export default function HomeScreen() {
           fWorkSet.size > 0,
         ];
 
-        // ---- DEBUG: what we read
-        console.log('[HS] distance config', { myLoc, maxKm, hasDist });
-        console.log('[HS] filters snapshot', {
-          fTitle, fCategory, fLanguage, fQualifications, fTags, fLocationName,
-          hasMin, hasMax,
-          scheduleCount: fScheduleSet.size, workCount: fWorkSet.size,
-          required
-        });
-
         const setCount = setFlags.filter(Boolean).length;
         if (setCount < required) {
           console.log('[HS] Not enough criteria set', { setCount, required });
@@ -213,7 +204,7 @@ export default function HomeScreen() {
           const participates = flags.length;
 
           if (participates >= required && passed >= required && raw.jobTitle && okDist) {
-            console.log('[HS] KEEP', { uid: child.key, title: raw.jobTitle, distanceKm, passed, participates, required });
+            console.log('HomeScreen KEEP', { uid: child.key, title: raw.jobTitle, distanceKm, passed, participates, required });
             acc.push({
               uid: child.key,
               userSettings: raw,
@@ -223,7 +214,7 @@ export default function HomeScreen() {
               _matchOf: participates,
             });
           } else {
-            console.log('[HS] DROP', {
+            console.log('HomeScreen DROP', {
               uid: child.key,
               title: raw.jobTitle,
               reasons: debug.reasons,
@@ -236,7 +227,6 @@ export default function HomeScreen() {
           }
         });
 
-        console.log('[HS] final cards:', acc.length);
         setCards(acc);
         setIndex(0);
       } catch (e) {
