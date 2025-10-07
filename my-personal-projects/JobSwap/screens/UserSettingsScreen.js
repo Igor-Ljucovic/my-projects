@@ -1,19 +1,18 @@
 import { useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import { Alert } from 'react-native';
-import { ref, onValue, update, set } from 'firebase/database';
 import { AuthContext } from '../store/auth-context';
-import { db } from '../util/firebase';
 import { USER_SETTINGS_DEFAULT } from '../constants/defaultSettings';
 import IconButton from '../components/UI/IconButton';
 import { parseLatLng } from '../util/geo';
 import UserSettingsForm from '../components/UI/UserSettingsForm';
+import { getUserSettings, patchUserSettings } from '../util/db_rest';
 
 
 function UserSettingsScreen({ navigation }) {
-  const { userId } = useContext(AuthContext);
-  const route = useRoute();
   const authCtx = useContext(AuthContext);
+  const { userId, token: authToken } = authCtx || {};
+  const route = useRoute();
 
   const DEFAULTS = { ...USER_SETTINGS_DEFAULT };
   const [form, setForm] = useState(DEFAULTS);
@@ -40,13 +39,14 @@ function UserSettingsScreen({ navigation }) {
 
   useEffect(() => {
     const picked = route.params?.pickedLocation;
-    const target = route.params?.target; // 'jobLocation' i 'userLocation'
-    if (!picked || !path) return;
+    const target = route.params?.target; // 'jobLocation' ili 'userLocation'
+    if (!picked || !userId || !authToken) return;
 
     const latlng = `${picked.lat},${picked.lng}`;
     const isUser = target === 'userLocation';
 
-    setForm(prev => ({
+    // local state update-uje odmah
+    setForm((prev) => ({
       ...prev,
       ...(isUser
         ? { userLocation: latlng }
@@ -59,10 +59,13 @@ function UserSettingsScreen({ navigation }) {
       : { jobLocation: latlng, jobLocationName: picked.label || '' };
 
     (async () => {
-      try { await update(ref(db, path), payload); } catch (e) {}
+      try {
+        await patchUserSettings(userId, payload, authToken);
+      } catch {
+        // da se ne pojavi error ako ne uspe update settings-a novog
+      }
     })();
-
-  }, [route.params?.pickedLocation, route.params?.target, path]);
+  }, [route.params?.pickedLocation, route.params?.target, userId, authToken]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -78,30 +81,35 @@ function UserSettingsScreen({ navigation }) {
     });
   }, [navigation, saving, loading]);
 
+  // pocetno ucitavanje settings-a kad se stranica otvori
   useEffect(() => {
-    if (!path) return;
+    if (!userId || !authToken) return;
 
-    const unsubscribe = onValue(
-      ref(db, path),
-      (snap) => {
-        const val = snap.val();
+    let alive = true;
+    (async () => {
+      setLoading(true);
+      try {
+        const val = await getUserSettings(userId, authToken);
+        if (!alive) return;
+
         if (val) {
           setForm({ ...DEFAULTS, ...val });
         } else {
-          set(ref(db, path), DEFAULTS).catch(() => {});
+          // ako nekom greskom nema settings-a, postavi default
+          await patchUserSettings(userId, DEFAULTS, authToken);
+          if (!alive) return;
           setForm(DEFAULTS);
         }
-        setLoading(false);
-      },
-      (err) => {
-        console.log('DB read failed:', err?.code, err?.message);
+      } catch (err) {
+        console.log('REST read failed:', err?.message || err);
         Alert.alert('Error', 'Failed to load settings.');
-        setLoading(false);
+      } finally {
+        if (alive) setLoading(false);
       }
-    );
+    })();
 
-    return () => unsubscribe();
-  }, [path]);
+    return () => { alive = false; };
+  }, [userId, authToken]);
 
   function setText(key, transform = (v) => v) {
     return (txt) => setForm((prev) => ({ ...prev, [key]: transform(txt) }));
@@ -114,7 +122,7 @@ function UserSettingsScreen({ navigation }) {
   }
 
   async function handleSave() {
-    if (!path) return;
+    if (!userId || !authToken) return;
 
     const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
@@ -162,10 +170,10 @@ function UserSettingsScreen({ navigation }) {
 
     setSaving(true);
     try {
-      await update(ref(db, path), cleaned);
+      await patchUserSettings(userId, cleaned, authToken);
       Alert.alert('Saved', 'Your user settings have been updated.');
     } catch (e) {
-      console.log('DB write failed:', e?.code, e?.message);
+      console.log('REST write failed:', e?.message || e);
       Alert.alert('Error', 'Could not save your settings.');
     } finally {
       setSaving(false);
