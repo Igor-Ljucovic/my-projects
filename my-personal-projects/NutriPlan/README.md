@@ -1,4 +1,6 @@
-A full-stack web app for planning meals and automatically generating a grocery list.
+**NutriPlan | PHP, Laravel, Eloquent ORM, MySQL, React, HTML, CSS, Bootstrap, Task Scheduler**
+
+-A full-stack web app for planning meals and automatically generating a grocery list.
 Implemented an admin dashboard for managing groceries, meals, users and roles
 
 Tech Stack

@@ -1,4 +1,4 @@
-Amazon employee resource access prediction | Python, Jupyter, Scikit-learn, Pandas, MatPlotLib, Numpy
+**Amazon employee resource access prediction | Python, Jupyter, Scikit-learn, Pandas, MatPlotLib, Numpy**
 
 -Developed machine learning classification models to predict 
 whether an employee should be granted access to a resource. 
