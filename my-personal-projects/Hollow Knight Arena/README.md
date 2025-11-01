@@ -1,6 +1,5 @@
--A boss rush prototype game similar to an already existing one
-(Hollow Knight) where the player can choose items, a game mode
-and a boss to fight from the menu.
+-A game inspired by an existing one. The player has 9 movement abilities, 3 spells, 24 items, 
+2 game modes, 3 arenas and fights a boss with 10 attacks. Implemented an input buffer system
 
 Assets/Scripts/PlayTest Scene Scripts - this is where most of the code is at.
 
