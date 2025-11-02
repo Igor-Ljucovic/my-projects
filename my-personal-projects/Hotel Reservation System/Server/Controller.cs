@@ -16,7 +16,7 @@ namespace Server
 
         public Reservation CreateReservation(Reservation Reservation)
         {
-            return SystemOperationHandler.Execute<Reservation, Reservation>(new CreateReservationSO<Reservation>(Reservation));
+            return SystemOperationHandler.Execute<Reservation, Reservation>(new CreateReservationSO(Reservation));
         }
 
         public List<Reservation> SearchReservation(IEntityAndCommandText iEntityAndCommandText)
@@ -31,7 +31,7 @@ namespace Server
 
         public ReservationItem CreateReservationItem(ReservationItem ReservationItem)
         {
-            return SystemOperationHandler.Execute<ReservationItem, ReservationItem>(new CreateReservationSO<ReservationItem>(ReservationItem));
+            return SystemOperationHandler.Execute<ReservationItem, ReservationItem>(new CreateReservationSO(ReservationItem));
         }
 
         public List<ReservationItem> SearchReservationItem(IEntityAndCommandText iEntityAndCommandText)

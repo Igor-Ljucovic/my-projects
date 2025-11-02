@@ -1,31 +1,28 @@
 ﻿using Common.Domain;
 using Domen;
 using System;
+using System.Diagnostics;
 
 namespace Server.SystemOperation
 {
-    internal class CreateReservationSO<T> : SystemOperationBase<T, T> where T : IEntity, ICreate
+    internal class CreateReservationSO : SystemOperationBase<Reservation, Reservation>
     {
-        public CreateReservationSO(T entity)
+        public CreateReservationSO(Reservation reservation)
         {
-            Entity = entity;
+            Entity = reservation;
         }
 
         protected override void ExecuteConcreteOperation()
         {
-            if (Entity is Reservation rezervacija)
+            Entity.IdReservation = broker.AddAndGetID<Reservation>(Entity.InsertSQLValues, "idReservation");
+            Result = Entity;
+
+            foreach (ReservationItem item in Entity.ReservationItems)
             {
-                rezervacija.IdReservation = broker.AddAndGetID<Reservation>(rezervacija.InsertSQLValues, "idRezervacija");
-                Result = (T)(IEntity)rezervacija;
+                item.Reservation = Entity;
+                Debug.WriteLine(item);
+                broker.Add<ReservationItem>(item.InsertSQLValues);
             }
-            else if (Entity is ReservationItem stavkaRezervacije)
-            {
-                broker.Add<ReservationItem>(stavkaRezervacije.InsertSQLValues);
-                Result = (T)(IEntity)stavkaRezervacije;
-            }
-            else
-                throw new Exception("Uneti tip podataka u parametrima nije validan");
-            
         }
     }
 }
