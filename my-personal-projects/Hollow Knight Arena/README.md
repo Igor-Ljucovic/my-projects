@@ -50,5 +50,11 @@ the player state system, the input buffering system, the item system.
 -Better understanding the trade off between readability, memory efficiency, development time and scalability
 
 
+
+YouTube video showcasing this video game: https://www.youtube.com/watch?v=phzQARODG74
+
+Note: I focused more on the game’s logic, so I didn’t create art style for the background or enemies.
+I just reused the existing sprites for the main character’s animations.
+
 Note: This project was committed all at once after development had already started, 
 as I didn't know how to use Git from the beginning. Version history is limited in early stages.

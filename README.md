@@ -20,3 +20,5 @@ and frontend tests and a script for running them
 
 6) **NutriPlan | PHP, Laravel, Eloquent ORM, MySQL, React, HTML, CSS, Bootstrap, Task Scheduler**  
 -A full-stack web app for planning meals and automatically generating a grocery list. Implemented an admin dashboard for managing groceries, meals, users and roles
+
+My YouTube playlist with some of these projects: https://www.youtube.com/playlist?list=PLOi6WcWwy-_VPgDLPfeccZKMN11P-fzOS
