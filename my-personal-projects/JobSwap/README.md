@@ -13,7 +13,7 @@ Tech Stack
 
 
 
-YouTube video showcasing this video game: https://www.youtube.com/watch?v=fv2AWQxCHEA
+YouTube video showcasing this mobile app: https://www.youtube.com/watch?v=fv2AWQxCHEA
 
 Note: I used this project to learn about mobile app development,
 how to use BaaS (Backend as a Service), in my case Firebase, 
